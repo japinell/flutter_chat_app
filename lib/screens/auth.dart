@@ -16,7 +16,7 @@ class _AuthScreenState extends State<AuthScreen> {
   final _formState = GlobalKey<FormState>();
   String _email = "";
   String _password = "";
-  bool _isLogin = false;
+  bool _isLogin = true;
 
   void _submitAuthForm() async {
     final isValid = _formState.currentState!.validate();
@@ -27,18 +27,23 @@ class _AuthScreenState extends State<AuthScreen> {
 
     _formState.currentState!.save();
 
-    if (_isLogin) {
-    } else {
-      try {
+    try {
+      if (_isLogin) {
+        final userCredential = await _firebaseAuth.signInWithEmailAndPassword(
+          email: _email,
+          password: _password,
+        );
+        print(userCredential);
+      } else {
         final userCredential = await _firebaseAuth
             .createUserWithEmailAndPassword(email: _email, password: _password);
         print(userCredential);
-      } on FirebaseAuthException catch (error) {
-        ScaffoldMessenger.of(context).clearSnackBars();
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(error.message ?? "Authentication failed.")),
-        );
       }
+    } on FirebaseAuthException catch (error) {
+      ScaffoldMessenger.of(context).clearSnackBars();
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(error.message ?? "Authentication failed.")),
+      );
     }
   }
 
@@ -105,7 +110,12 @@ class _AuthScreenState extends State<AuthScreen> {
                           ),
                           SizedBox(height: 12),
                           ElevatedButton(
-                            onPressed: _submitAuthForm,
+                            onPressed: () {
+                              setState(() {
+                                _isLogin = false;
+                              });
+                              _submitAuthForm();
+                            },
                             style: ElevatedButton.styleFrom(
                               backgroundColor: Theme.of(
                                 context,
@@ -114,7 +124,12 @@ class _AuthScreenState extends State<AuthScreen> {
                             child: Text("Sign Up"),
                           ),
                           ElevatedButton(
-                            onPressed: () {},
+                            onPressed: () {
+                              setState(() {
+                                _isLogin = true;
+                              });
+                              _submitAuthForm();
+                            },
                             style: ElevatedButton.styleFrom(
                               backgroundColor: Theme.of(
                                 context,
