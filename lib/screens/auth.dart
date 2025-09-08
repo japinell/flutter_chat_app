@@ -1,4 +1,7 @@
 import "package:flutter/material.dart";
+import "package:firebase_auth/firebase_auth.dart";
+
+final _firebaseAuth = FirebaseAuth.instance;
 
 class AuthScreen extends StatefulWidget {
   const AuthScreen({super.key});
@@ -13,13 +16,29 @@ class _AuthScreenState extends State<AuthScreen> {
   final _formState = GlobalKey<FormState>();
   String _email = "";
   String _password = "";
+  bool _isLogin = false;
 
-  void _submitAuthForm() {
+  void _submitAuthForm() async {
     final isValid = _formState.currentState!.validate();
 
-    if (isValid) {
-      _formState.currentState!.save();
-      print("Email: $_email, Password: $_password");
+    if (!isValid) {
+      return;
+    }
+
+    _formState.currentState!.save();
+
+    if (_isLogin) {
+    } else {
+      try {
+        final userCredential = await _firebaseAuth
+            .createUserWithEmailAndPassword(email: _email, password: _password);
+        print(userCredential);
+      } on FirebaseAuthException catch (error) {
+        ScaffoldMessenger.of(context).clearSnackBars();
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(error.message ?? "Authentication failed.")),
+        );
+      }
     }
   }
 
@@ -86,7 +105,7 @@ class _AuthScreenState extends State<AuthScreen> {
                           ),
                           SizedBox(height: 12),
                           ElevatedButton(
-                            onPressed: () {},
+                            onPressed: _submitAuthForm,
                             style: ElevatedButton.styleFrom(
                               backgroundColor: Theme.of(
                                 context,
@@ -95,7 +114,7 @@ class _AuthScreenState extends State<AuthScreen> {
                             child: Text("Sign Up"),
                           ),
                           ElevatedButton(
-                            onPressed: _submitAuthForm,
+                            onPressed: () {},
                             style: ElevatedButton.styleFrom(
                               backgroundColor: Theme.of(
                                 context,
