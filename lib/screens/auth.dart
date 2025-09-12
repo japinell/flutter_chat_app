@@ -1,6 +1,7 @@
 import "dart:io";
 import "package:flutter/material.dart";
 import "package:firebase_auth/firebase_auth.dart";
+import "package:firebase_storage/firebase_storage.dart";
 
 import "package:flutter_chat_app/widgets/custom_image_picker.dart";
 
@@ -41,6 +42,15 @@ class _AuthScreenState extends State<AuthScreen> {
       } else {
         final userCredential = await _firebaseAuth
             .createUserWithEmailAndPassword(email: _email, password: _password);
+
+        final storageRef = FirebaseStorage.instance
+            .ref()
+            .child("user_images")
+            .child("${userCredential.user!.uid}.jpg");
+
+        await storageRef.putFile(_selectedImage!);
+        final imageUrl = await storageRef.getDownloadURL();
+        print(imageUrl);
       }
     } on FirebaseAuthException catch (error) {
       ScaffoldMessenger.of(context).clearSnackBars();
