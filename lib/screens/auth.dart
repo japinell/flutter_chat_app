@@ -21,6 +21,7 @@ class _AuthScreenState extends State<AuthScreen> {
   String _email = "";
   String _password = "";
   bool _isLogin = true;
+  bool _isAuthenticating = false;
   File? _selectedImage;
 
   void _submitAuthForm() async {
@@ -34,6 +35,10 @@ class _AuthScreenState extends State<AuthScreen> {
     _formState.currentState!.save();
 
     try {
+      setState(() {
+        _isAuthenticating = true;
+      });
+
       if (_isLogin) {
         final userCredential = await _firebaseAuth.signInWithEmailAndPassword(
           email: _email,
@@ -57,6 +62,9 @@ class _AuthScreenState extends State<AuthScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(error.message ?? "Authentication failed.")),
       );
+      setState(() {
+        _isAuthenticating = false;
+      });
     }
   }
 
@@ -142,20 +150,22 @@ class _AuthScreenState extends State<AuthScreen> {
                             ),
                             child: Text("Sign Up"),
                           ),
-                          ElevatedButton(
-                            onPressed: () {
-                              setState(() {
-                                _isLogin = true;
-                              });
-                              _submitAuthForm();
-                            },
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Theme.of(
-                                context,
-                              ).colorScheme.primaryContainer,
+                          if (_isAuthenticating) CircularProgressIndicator(),
+                          if (!_isAuthenticating)
+                            ElevatedButton(
+                              onPressed: () {
+                                setState(() {
+                                  _isLogin = true;
+                                });
+                                _submitAuthForm();
+                              },
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Theme.of(
+                                  context,
+                                ).colorScheme.primaryContainer,
+                              ),
+                              child: Text("Log In"),
                             ),
-                            child: Text("Log In"),
-                          ),
                         ],
                       ),
                     ),
