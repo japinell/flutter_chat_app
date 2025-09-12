@@ -42,7 +42,7 @@ class _CustomImagePickerState extends State<CustomImagePicker> {
               : null,
         ),
         TextButton.icon(
-          onPressed: () {},
+          onPressed: _pickImage,
           icon: const Icon(Icons.image),
           label: Text(
             "Pick Image",
