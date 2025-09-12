@@ -1,4 +1,6 @@
+import "package:firebase_auth/firebase_auth.dart";
 import "package:flutter/material.dart";
+import "package:cloud_firestore/cloud_firestore.dart";
 
 class NewMessage extends StatefulWidget {
   const NewMessage({super.key});
@@ -10,7 +12,7 @@ class NewMessage extends StatefulWidget {
 }
 
 class _NewMessageState extends State<NewMessage> {
-  var _messageController = TextEditingController();
+  final _messageController = TextEditingController();
 
   @override
   void dispose() {
@@ -18,13 +20,27 @@ class _NewMessageState extends State<NewMessage> {
     super.dispose();
   }
 
-  void _sendMessage() {
+  void _sendMessage() async {
     final message = _messageController.text;
 
     if (message.trim().isEmpty) {
       // TODO: Show error message
       return;
     }
+
+    final user = FirebaseAuth.instance.currentUser!;
+    final userData = await FirebaseFirestore.instance
+        .collection("users")
+        .doc(user.uid)
+        .get();
+
+    FirebaseFirestore.instance.collection("chats").add({
+      "message": message,
+      "createdAt": Timestamp.now(),
+      "userId": user.uid,
+      "username": userData.data()!["username"],
+      "userImage": userData.data()!["image_url"],
+    });
 
     _messageController.clear();
   }
