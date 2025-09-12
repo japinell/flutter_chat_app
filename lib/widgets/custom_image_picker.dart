@@ -46,7 +46,7 @@ class _CustomImagePickerState extends State<CustomImagePicker> {
           icon: const Icon(Icons.image),
           label: Text(
             "Pick Image",
-            style: TextStyle(color: Theme.of(context).primaryColor),
+            style: TextStyle(color: Theme.of(context).colorScheme.primary),
           ),
         ),
       ],
