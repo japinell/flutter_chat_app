@@ -22,14 +22,14 @@ class _AuthScreenState extends State<AuthScreen> {
   String _username = "";
   String _email = "";
   String _password = "";
-  bool _isLogin = true;
+  bool _isSignup = true;
   bool _isAuthenticating = false;
   File? _selectedImage;
 
   void _submitAuthForm() async {
     final isValid = _formState.currentState!.validate();
 
-    if (!isValid || (_isLogin && _selectedImage == null)) {
+    if (!isValid || (_isSignup && _selectedImage == null)) {
       // TODO: Show error message
       return;
     }
@@ -41,7 +41,7 @@ class _AuthScreenState extends State<AuthScreen> {
         _isAuthenticating = true;
       });
 
-      if (_isLogin) {
+      if (!_isSignup) {
         final userCredential = await _firebaseAuth.signInWithEmailAndPassword(
           email: _email,
           password: _password,
@@ -107,13 +107,13 @@ class _AuthScreenState extends State<AuthScreen> {
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          if (_isLogin)
+                          if (_isSignup)
                             CustomImagePicker(
                               onPickImage: (pickedImage) {
                                 _selectedImage = pickedImage;
                               },
                             ),
-                          if (_isLogin)
+                          if (_isSignup)
                             TextFormField(
                               decoration: InputDecoration(
                                 labelText: "Username",
@@ -122,8 +122,8 @@ class _AuthScreenState extends State<AuthScreen> {
                               validator: (value) {
                                 if (value == null ||
                                     value.isEmpty ||
-                                    value.trim().length < 8) {
-                                  return "Please enter a username with at least 8 characters.";
+                                    value.trim().length < 4) {
+                                  return "Please enter a username with at least 4 characters.";
                                 }
                                 return null;
                               },
@@ -167,7 +167,7 @@ class _AuthScreenState extends State<AuthScreen> {
                           ElevatedButton(
                             onPressed: () {
                               setState(() {
-                                _isLogin = false;
+                                _isSignup = true;
                               });
                               _submitAuthForm();
                             },
@@ -183,7 +183,7 @@ class _AuthScreenState extends State<AuthScreen> {
                             ElevatedButton(
                               onPressed: () {
                                 setState(() {
-                                  _isLogin = true;
+                                  _isSignup = false;
                                 });
                                 _submitAuthForm();
                               },
