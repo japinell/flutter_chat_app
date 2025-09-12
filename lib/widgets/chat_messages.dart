@@ -6,4 +6,5 @@ class ChatMessages extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Center(child: Text("This is the chat messages widget."));
+  }
 }
