@@ -1,5 +1,7 @@
 import "package:flutter/material.dart";
 import "package:firebase_auth/firebase_auth.dart";
+import "package:flutter_chat_app/widgets/chat_messages.dart";
+import "package:flutter_chat_app/widgets/new_message.dart";
 
 class ChatScreen extends StatelessWidget {
   const ChatScreen({super.key});
@@ -21,7 +23,12 @@ class ChatScreen extends StatelessWidget {
           ),
         ],
       ),
-      body: Center(child: Text("This is the chat screen.")),
+      body: Column(
+        children: const [
+          Expanded(child: ChatMessages()),
+          NewMessage(),
+        ],
+      ),
     );
   }
 }
