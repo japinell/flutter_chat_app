@@ -19,6 +19,7 @@ class AuthScreen extends StatefulWidget {
 
 class _AuthScreenState extends State<AuthScreen> {
   final _formState = GlobalKey<FormState>();
+  String _username = "";
   String _email = "";
   String _password = "";
   bool _isLogin = true;
@@ -60,7 +61,11 @@ class _AuthScreenState extends State<AuthScreen> {
         await FirebaseFirestore.instance
             .collection("users")
             .doc(userCredential.user!.uid)
-            .set({"username": "TBD", "email": _email, "image_url": imageUrl});
+            .set({
+              "username": _username,
+              "email": _email,
+              "image_url": imageUrl,
+            });
       }
     } on FirebaseAuthException catch (error) {
       ScaffoldMessenger.of(context).clearSnackBars();
@@ -106,6 +111,24 @@ class _AuthScreenState extends State<AuthScreen> {
                             CustomImagePicker(
                               onPickImage: (pickedImage) {
                                 _selectedImage = pickedImage;
+                              },
+                            ),
+                          if (_isLogin)
+                            TextFormField(
+                              decoration: InputDecoration(
+                                labelText: "Username",
+                              ),
+                              enableSuggestions: false,
+                              validator: (value) {
+                                if (value == null ||
+                                    value.isEmpty ||
+                                    value.trim().length < 8) {
+                                  return "Please enter a username with at least 8 characters.";
+                                }
+                                return null;
+                              },
+                              onSaved: (value) {
+                                _username = value!;
                               },
                             ),
                           TextFormField(
