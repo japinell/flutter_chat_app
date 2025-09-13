@@ -55,3 +55,7 @@ app.*.map.json
 # Firebase related
 firebase.json
 lib/firebase_options.dart
+.firebaserc
+functions/package.json
+functions/package-lock.json
+functions/node_modules/
