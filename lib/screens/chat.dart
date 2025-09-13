@@ -1,5 +1,7 @@
 import "package:flutter/material.dart";
 import "package:firebase_auth/firebase_auth.dart";
+import "package:firebase_messaging/firebase_messaging.dart";
+
 import "package:flutter_chat_app/widgets/chat_messages.dart";
 import "package:flutter_chat_app/widgets/new_message.dart";
 
@@ -11,9 +13,19 @@ class ChatScreen extends StatefulWidget {
 }
 
 class _ChatScreenState extends State<ChatScreen> {
+  void enablePushNotifications() async {
+    final firebase = FirebaseMessaging.instance;
+    await firebase.requestPermission();
+
+    final token = await firebase.getToken();
+    print("Firebase Messaging Token: $token");
+  }
+
   @override
   void initState() {
     super.initState();
+
+    enablePushNotifications();
   }
 
   @override
