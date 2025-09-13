@@ -17,8 +17,10 @@ class _ChatScreenState extends State<ChatScreen> {
     final firebase = FirebaseMessaging.instance;
     await firebase.requestPermission();
 
-    final token = await firebase.getToken();
-    print("Firebase Messaging Token: $token");
+    //final token = await firebase.getToken();
+    //print("Firebase Messaging Token: $token");
+
+    firebase.subscribeToTopic("chat");
   }
 
   @override
