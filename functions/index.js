@@ -1,5 +1,5 @@
-// const functions = require("firebase-functions/v2/firestore");
-const functions = require("firebase-functions");
+const functions = require("firebase-functions/v2/firestore");
+// const functions = require("firebase-functions");
 const admin = require("firebase-admin");
 
 // When encountering an error after using this code
